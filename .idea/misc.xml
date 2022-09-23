@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/round_bg.xml" value="0.1925" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_login.xml" value="0.184375" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_main.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_registered.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_splash.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/article_webview.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/banner.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/contact.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/home.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/item.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/me.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/popular_sites.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/webview_show_test.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/webview_test.xml" value="0.2890625" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
