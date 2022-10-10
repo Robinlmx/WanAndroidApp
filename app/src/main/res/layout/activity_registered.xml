@@ -20,12 +20,12 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.15" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25" />
+<!--    <androidx.constraintlayout.widget.Guideline-->
+<!--        android:id="@+id/guideline9"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        app:layout_constraintGuide_percent="0.25" />-->
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline10"
@@ -88,45 +88,46 @@
         android:hint="@string/plsu"
         android:inputType="textPersonName"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline8" />
-
-    <EditText
-        android:id="@+id/et_rgsEmail"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:background="@drawable/round_border"
-        android:drawableStart="@drawable/ic_email"
-        android:drawablePadding="16dp"
-        android:ems="10"
-        android:hint="@string/plsemail"
-        android:inputType="textPersonName"
-        android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline9" />
-
-    <EditText
-        android:id="@+id/et_rgsPhoneNum"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:background="@drawable/round_border"
-        android:drawableStart="@drawable/ic_phone"
-        android:drawableEnd="@drawable/ic_start"
-        android:drawablePadding="16dp"
-        android:ems="10"
-        android:hint="@string/plsohone"
-        android:inputType="textPersonName"
-        android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline11"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline10" />
+
+<!--    <EditText-->
+<!--        android:id="@+id/et_rgsEmail"-->
+<!--        android:layout_width="350dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:autofillHints=""-->
+<!--        android:background="@drawable/round_border"-->
+<!--        android:drawableStart="@drawable/ic_email"-->
+<!--        android:drawableEnd="@drawable/ic_start"-->
+<!--        android:drawablePadding="16dp"-->
+<!--        android:ems="10"-->
+<!--        android:hint="@string/plsemail"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:padding="16dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/guideline10"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/guideline9" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/et_rgsPhoneNum"-->
+<!--        android:layout_width="350dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:autofillHints=""-->
+<!--        android:background="@drawable/round_border"-->
+<!--        android:drawableStart="@drawable/ic_phone"-->
+<!--        android:drawableEnd="@drawable/ic_start"-->
+<!--        android:drawablePadding="16dp"-->
+<!--        android:ems="10"-->
+<!--        android:hint="@string/plsohone"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:padding="16dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/guideline11"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/guideline10" />-->
 
     <EditText
         android:id="@+id/et_rgsPsw1"

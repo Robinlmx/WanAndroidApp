@@ -1,25 +1,462 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="我的"
-        android:textSize="30sp"
-        android:textColor="#000000"
-        android:layout_gravity="center" />
+    <ImageView
+        android:id="@+id/iv_blur"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:scaleType="centerCrop"
+        tools:ignore="UseAppTint" />
 
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="去登录"-->
-<!--        android:textSize="30sp"-->
-<!--        android:textColor="#000000"-->
-<!--        android:layout_gravity="center" />-->
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/srl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srlEnablePureScrollMode="true">
 
-</LinearLayout>
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingBottom="@dimen/bottom_bar_height"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_user_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/civ_user_icon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="80dp"
+                        android:clickable="true"
+                        android:onClick="onClick"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_please_login"
+                        app:riv_corner_radius="80dp"
+                        app:riv_mutate_background="true" />
+
+                    <TextView
+                        android:id="@+id/tv_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/civ_user_icon"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:text="GOWEII"
+                        android:textSize="@dimen/text_headline" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_user_level_ranking"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_user_name"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:alpha="0.8">
+
+                        <LinearLayout
+                            android:id="@+id/ll_user_level"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="等级:"
+                                android:textSize="@dimen/text_notes" />
+
+                            <TextView
+                                android:id="@+id/tv_user_level"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_notes"
+                                android:text="15" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="0dp" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_user_ranking"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="排名:"
+                                android:textSize="@dimen/text_notes" />
+
+                            <TextView
+                                android:id="@+id/tv_user_ranking"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_notes"
+                                android:text="71" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/user_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:onClick="onClick"
+                        android:clickable="true">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_coin"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:text="个人信息"
+                            android:textSize="@dimen/text_content" />
+
+                        <TextView
+                            android:id="@+id/tv_coin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textSize="@dimen/text_notes"
+                            tools:text="520" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_enter"
+                            tools:ignore="UseAppTint" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_share"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_share_article"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:text="我的分享"
+                            android:textSize="@dimen/text_content" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_enter"
+                            tools:ignore="UseAppTint" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_collect"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:onClick="onClick"
+                        android:clickable="true">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_collect"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:text="我的收藏"
+                            android:textSize="@dimen/text_content" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_enter"
+                            tools:ignore="UseAppTint" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_read_later"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_read_later"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:text="我的书签"
+                            android:textSize="@dimen/text_content" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_enter"
+                            tools:ignore="UseAppTint" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_read_record"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_read_record"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:text="阅读历史"
+                            android:textSize="@dimen/text_content" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_enter"
+                            tools:ignore="UseAppTint" />
+
+                    </LinearLayout>
+
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/ll_open"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="50dp"-->
+<!--                        android:background="@drawable/bg_press_color_surface"-->
+<!--                        android:gravity="center"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:paddingLeft="16dp"-->
+<!--                        android:paddingRight="16dp">-->
+
+<!--                        <ImageView-->
+<!--                            android:layout_width="18dp"-->
+<!--                            android:layout_height="18dp"-->
+<!--                            android:scaleType="fitCenter"-->
+<!--                            android:src="@drawable/ic_github"-->
+<!--                            tools:ignore="UseAppTint" />-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginLeft="10dp"-->
+<!--                            android:layout_marginRight="10dp"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:singleLine="true"-->
+<!--                            android:text="开源项目"-->
+<!--                            android:textSize="@dimen/text_content" />-->
+
+<!--                        <ImageView-->
+<!--                            android:layout_width="16dp"-->
+<!--                            android:layout_height="16dp"-->
+<!--                            android:scaleType="fitCenter"-->
+<!--                            android:src="@drawable/ic_enter"-->
+<!--                            tools:ignore="UseAppTint" />-->
+
+<!--                    </LinearLayout>-->
+
+                    <LinearLayout
+                        android:id="@+id/ll_about_me"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_about"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:text="关于作者"
+                            android:textSize="@dimen/text_content" />
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginRight="5dp"-->
+<!--                            android:singleLine="true"-->
+<!--                            android:text="请他喝杯咖啡~"-->
+<!--                            android:textSize="@dimen/text_notes" />-->
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_enter"
+                            tools:ignore="UseAppTint" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_login_out"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/item_height"
+                        android:layout_marginTop="@dimen/margin_xxlarge"
+                        android:layout_marginLeft="120dp"
+                        android:layout_marginRight="120dp"
+                        android:gravity="center"
+                        android:text="退出登录"
+                        android:textColor="@color/textcolor_black333"
+                        android:textSize="@dimen/textsize_middle"
+                        android:background="#CC0000"
+                        android:onClick="onClick"
+                        android:clickable="true"/>
+                    <!--                app:bl_pressed_solid_color="@color/pressed_bg_color"-->
+                    <!--                app:bl_unPressed_solid_color="@color/unpressed_bg_color" />-->
+
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/ll_setting"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="50dp"-->
+<!--                        android:background="@drawable/bg_press_color_surface"-->
+<!--                        android:gravity="center"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:paddingLeft="16dp"-->
+<!--                        android:paddingRight="16dp">-->
+
+<!--                        <ImageView-->
+<!--                            android:layout_width="18dp"-->
+<!--                            android:layout_height="18dp"-->
+<!--                            android:scaleType="fitCenter"-->
+<!--                            android:src="@drawable/ic_setting"-->
+<!--                            tools:ignore="UseAppTint" />-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginLeft="10dp"-->
+<!--                            android:layout_marginRight="10dp"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:singleLine="true"-->
+<!--                            android:text="系统设置"-->
+<!--                            android:textSize="@dimen/text_content" />-->
+
+<!--                        <ImageView-->
+<!--                            android:layout_width="16dp"-->
+<!--                            android:layout_height="16dp"-->
+<!--                            android:scaleType="fitCenter"-->
+<!--                            android:src="@drawable/ic_enter"-->
+
+<!--                    </LinearLayout>-->
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+<!--    <per.goweii.actionbarex.ActionBarEx-->
+<!--        android:id="@+id/ab"-->
+<!--        style="@style/ActionBar"-->
+<!--        android:background="?colorTransparent"-->
+<!--        app:ab_titleBarLayout="@layout/action_bar_mine" />-->
+
+</FrameLayout>
 

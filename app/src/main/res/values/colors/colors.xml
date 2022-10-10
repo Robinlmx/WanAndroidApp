@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="theme_color_night">#CC3333</color>
+    <color name="colorPrimary_night">@color/theme_color_night</color>
+    <color name="colorPrimaryDark_night">@color/theme_color_night</color>
+    <color name="colorAccent_night">#FFCC00</color>
+    <color name="windows_background_night">#3d3b4f</color>
+    <!--文本用色-->
+    <color name="textcolor_black333_night">#6666CC</color>
+    <color name="textcolor_black666_night">#6666FF</color>
+    <color name="textcolor_black999_night">#CCCCFF</color>
+    <!--常用色-->
+    <color name="black_night">#000000</color>
+    <color name="white_night">#ffffff</color>
+    <color name="transparent_night">#0000</color>
+    <color name="trans_6_night">#6000</color>
+    <color name="orange_night">#f86734</color>
+
+    <!--分割线的颜色-->
+    <color name="divider_night">@color/windows_background_night</color>
+    <!--按下去的背景色-->
+    <color name="pressed_bg_color_night">#e0e0e0</color>
+    <!--松开的背景色-->
+    <color name="unpressed_bg_color_night">@color/white_night</color>
+    <!--按下去的文本色-->
+    <color name="pressed_text_color_night">#e0e0e0</color>
+    <!--按下去的边框色-->
+    <color name="pressed_stroke_color_night">#48ff46</color>
+    <!--松开的边框色-->
+    <color name="unpressed_stroke_color_night">@color/theme_color_night</color>
+    <color name="tab_select_textcolor_night">#cce8cf</color>
+    <!--遮罩颜色-->
+
+
+    <!--复制过来的颜色值-->
+    <color name="red_f54860_night">#f54860</color>
+    <color name="red_feeae3_night" tools:keep="@color/red_feeae3_night">#feeae3</color>
+    <color name="blue_00abf4_night">#00abf4</color>
+    <color name="grey_e8e8e8_night">#E8E8E8</color>
+
+    <color name="main_night">#EE2516</color>
+    <color name="main_bg_night">#F2F2F2</color>
+    <color name="green_53b948_night">#53b948</color>
+    <color name="green_00D8E6_night">#00D8E6</color>
+    <!--文本的颜色-->
+    <color name="txt_grey_night">#999999</color>
+    <color name="txt_black_night">#333333</color>
+
+    <!--线条的颜色-->
+
+</resources>

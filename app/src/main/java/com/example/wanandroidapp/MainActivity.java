@@ -1,18 +1,23 @@
 package com.example.wanandroidapp;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,8 +33,19 @@ import com.example.wanandroidapp.Banner.Banner;
 import com.example.wanandroidapp.Banner.GetViewPagerItemView;
 import com.example.wanandroidapp.Banner.GsonBannerData;
 import com.example.wanandroidapp.Thread.GetNetDataThread;
+import com.example.wanandroidapp.Adapter.ArticleAdapter;
+import com.example.wanandroidapp.Tool.CircleImageView;
+import com.example.wanandroidapp.Tool.CollectArticlePost;
+import com.example.wanandroidapp.Tool.DBHelper;
+import com.example.wanandroidapp.Tool.GetPostData;
+import com.example.wanandroidapp.Tool.UserLoginPost;
 import com.example.wanandroidapp.bean.Article;
 
+import com.example.wanandroidapp.bean.Fruit;
+import com.example.wanandroidapp.bean.NavigationData;
+import com.example.wanandroidapp.bean.UserInfo;
+import com.example.wanandroidapp.bean.WenDa;
+import com.example.wanandroidapp.login.LoginActivity;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -39,41 +55,71 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements GetViewPagerItemView{
-
+    private View view;
     private ViewPager mViewPager;
     private ViewPager mViewBannerPager;
     private RadioGroup mRadioGroup;
     private RadioButton tab1, tab2, tab3, tab4;
     private List<View> mViews;   //存放视图
-    private TextView textView;
-    public static String jsonStr = ""; //静态变量
+    private TextView textView,  exitLoginView;
+    //private TextView userInfoLevel_tv ,  userInfoRank_tv;
+    private ImageView article_iv,imageView;
     //private BannerActivity bannerActivity;
-
-
     private Banner mBanner;
-
     private final int[] mDrawableIds = {R.mipmap.icon_true, R.mipmap.icon_true, R.mipmap.icon_true, R.mipmap.icon_true, R.mipmap.icon_true};
-
-
-
-
     private List<String> mItemViews = new ArrayList();
+    ArrayList<String> navigationNameList = new ArrayList<String>();
 
+    public ArrayList<String> getNavigationNameList() {
+        return navigationNameList;
+    }
+
+    private List<Fruit> fruitList = new ArrayList<>();
+
+    ArrayList<Button> buttonList = new ArrayList<Button>();
+    Button button742;
+    int articleIsClick = 1;
+    int isLogin1 = 0;
+    int isLogin2 = 0;
+    //String cookiestr;
+    public void setNavigationNameList(ArrayList<String> navigationNameList) {
+        this.navigationNameList = navigationNameList;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        exitLoginView = findViewById(R.id.tv_login_out);
+//        exitLoginView.setVisibility(View.GONE);
         initView();//初始化数据
 
         //初始化轮播图数据
         initBannerViews();
         initBannerDatas();
-//        IdCardFragment frontFragment =
-//                (IdCardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_card_front);
 
-        //对单选按钮进行监听，选中、未选中
+
+//        if(isLogin1 == 1 || isLogin2 == 1) {
+//            exitLoginView.setVisibility(View.VISIBLE);
+//        }else{
+//            exitLoginView.setVisibility(View.GONE);
+//        }
+
+
+//        try {
+//            Bundle bundle = getIntent().getExtras();
+//            String cookiestr = bundle.getString("cookiestr");
+//            Log.d("Aaron","传入的cookiestr == " + cookiestr);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+
+//        Intent intent=getIntent();
+//        Bundle bundle=intent.getBundleExtra("bundle");
+//        String cookiestr = bundle.getString("cookiestr");
+//        Log.d("Aaron","传入的cookiestr == " + cookiestr);
+
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -94,10 +140,47 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
                         mViewPager.setCurrentItem(3);
                         mBanner.setVisibility(View.GONE);
                         break;
+
                 }
             }
         });
 
+
+    }
+
+    //    private void init() {
+//        for (int i = 0; i < 50; i++) {
+//            Fruit fruit = new Fruit(R.drawable.home,"Name"+i);
+//            fruitList.add(fruit);
+//        }
+//    }
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.user_info:
+                //Log.d("Aaron","点击个人数据");
+                Intent it = new Intent(MainActivity.this, UserInfoActivity.class);
+                startActivity(it);
+                break;
+            case R.id.civ_user_icon:
+                //Log.d("Aaron","点击头像");
+                it = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(it);
+                //Log.d("Aaron", "个人信息 == " + userInfoJsonData());
+                //finish();
+                break;
+            case R.id.ll_collect:
+                //Log.d("Aaron","点击我的收藏");
+                it = new Intent(MainActivity.this, CollectArticleActivity.class);
+                startActivity(it);
+                break;
+            case R.id.tv_login_out:
+//                DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
+//                SQLiteDatabase db = dbHelper.getWritableDatabase();
+//                db.delete("cookies","u_id = 1",null);
+                Toast.makeText(MainActivity.this, "退出登录", Toast.LENGTH_SHORT).show();
+                break;
+        }
 
     }
 
@@ -148,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
     }
 
 
-
     private void initView() {
         //初始化控件
         mViewPager = findViewById(R.id.viewpager);
@@ -157,55 +239,282 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         tab2 = findViewById(R.id.rb_contact);
         tab3 = findViewById(R.id.rb_popular_sites);
         tab4 = findViewById(R.id.rb_me);
+        view=View.inflate(getApplicationContext(),R.layout.me,null);
+        //exitLoginView = findViewById(R.id.tv_login_out);
+//        exitLoginView = findViewById(R.id.tv_login_out);
+//        exitLoginView.setBackgroundColor(Color.WHITE);
+
+
+        //exitLoginView.setVisibility(View.VISIBLE);
 
         mViews = new ArrayList<View>();//加载，添加视图
 
+        article_iv = findViewById(R.id.iv_collect);
 
         View viewHome = LayoutInflater.from(this).inflate(R.layout.home, null);
+        //View viewHome = LayoutInflater.from(this).inflate(R.layout.test_viewhome,null);
+        View navigation_viewHome = LayoutInflater.from(this).inflate(R.layout.popular_sites, null);  //导航的视图
+        View wenda_viewHome = LayoutInflater.from(this).inflate(R.layout.contact, null);
+        View me_viewHome = LayoutInflater.from(this).inflate(R.layout.me, null);
+        CircleImageView circleImageView = new CircleImageView(this);
 
         ListView listView = viewHome.findViewById(R.id.listView);
+        ListView navigation_listView = navigation_viewHome.findViewById(R.id.navigation_listView);
+        ListView wenda_listView = wenda_viewHome.findViewById(R.id.wenda_listView);
+        //ListView navigation_listView1 = navigation_viewHome.findViewById(R.id.navigation_listView1);
+        //ListView navigation_listView = navigation_viewHome.findViewById(R.id.listView);
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> listNavigationItem = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> listWenDaItem = new ArrayList<>();
         ArrayList<String> articleLinkList = new ArrayList<String>();
         ArrayList<String> titleList = new ArrayList<String>();
+        ArrayList<String> wenDaLinkList = new ArrayList<String>();
+        ArrayList<String> wenDaTitleList = new ArrayList<String>();
         articleLinkList = parseJsonData("articleList");
         titleList = parseJsonData("titleList");
-        //parseJsonData();
+
+        //Log.d("Aaron","问答数据==" + wendaJsonData("wenDaLink"));
+        wenDaLinkList = wendaJsonData("wenDaLink");
+        wenDaTitleList = wendaJsonData("wenDaTitle");
+        //Log.d("Aaron","返回的数据是==" + navigationJsonData("navigationName"));
+//        if(isLogin1 == 1 || isLogin2 == 1){
+//            exitLoginView.setVisibility(View.VISIBLE);
+//        }
 
 
-        for (int i = 0; i < articleLinkList.size(); i++) {
+        userInfoJsonData(me_viewHome);
+//        DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        ContentValues cValue = new ContentValues();
+//
+//        cValue.put("u_id",2);
+//        cValue.put("cookie","1");      // 1代表登录状态
+//        db.insert("cookies",null,cValue);
+//        db.close();
+
+//        Cursor cursor = db.query("cookies", null, null, null, null, null, null);
+//
+//        // 将游标移到开头
+//        cursor.moveToFirst();
+//
+//        while (!cursor.isAfterLast()) { // 游标只要不是在最后一行之后，就一直循环
+//
+//            int id=cursor.getInt(0);
+//            Log.d("Aaron","id==" + id);
+//            String cookie=cursor.getString(1);
+//            Log.d("Aaron","cookie==" + cookie);
+//            // 将游标移到下一行
+//            cursor.moveToNext();
+//
+//        }
+//
+//        db.close();
+
+
+//        for (int i = 0; i < articleLinkList.size(); i++) {
+//            HashMap<String, Object> map = new HashMap<>();
+//            //加入图片
+//            textView = (TextView) findViewById(R.id.textView);
+//            imageView = (ImageView) findViewById(R.id.iv_collect);
+//            //map.put("ItemImage", R.drawable.me);
+//            //map.put("ItemText", "这是第" + i + "行");
+//            map.put("ItemText", titleList.get(i));
+//            listItem.add(map);
+//            //Log.d("Aaron", "i==" + i);
+//        }
+
+        //navigationNameList = navigationJsonData("navigationName");
+        navigationNameList = navigationJsonData("navigationName");
+        //Log.d("Aaron", "navigationNameList  主函数的数据是==" + navigationNameList);
+        //circleImageView.setNavigationNameList(navigationNameList);
+        for (int i = 0; i < navigationNameList.size(); i++) {
+            HashMap<String, Object> map = new HashMap<>();
+            textView = (TextView) findViewById(R.id.textView);
+            map.put("ItemText", navigationNameList.get(i));
+            listNavigationItem.add(map);
+
+        }
+
+        for (int i = 0; i < wenDaTitleList.size(); i++) {
             HashMap<String, Object> map = new HashMap<>();
             //加入图片
             textView = (TextView) findViewById(R.id.textView);
             //map.put("ItemImage", R.drawable.me);
-//            map.put("ItemText", "这是第" + i + "行");
-            map.put("ItemText", titleList.get(i));
-            listItem.add(map);
+            //map.put("ItemText", "这是第" + i + "行");
+            map.put("ItemText", wenDaTitleList.get(i));
+            listWenDaItem.add(map);
+            //Log.d("Aaron","listWenDaItem==" + listWenDaItem );
             //Log.d("Aaron", "i==" + i);
         }
 
 
-        SimpleAdapter adapter = new SimpleAdapter(this,
+//        SimpleAdapter adapter = new SimpleAdapter(this,
+//                //绑定的数据
+//                listItem,
+//                //每一行的布局
+//                R.layout.item,
+//                //动态数组中的数据源的键映射到布局文件对应的控件中
+////                new String[]{"ItemImage", "ItemText"},
+////                new int[]{R.id.imageView, R.id.textView});
+//                new String[]{"ItemText"},
+//                new int[]{R.id.textView}
+//        );
+
+
+
+        // 给导航栏数据添加一个适配器
+        SimpleAdapter navigation_adapter = new SimpleAdapter(this,
                 //绑定的数据
-                listItem,
+                listNavigationItem,
+                //每一行的布局
+                R.layout.frequentwebsite_item,
+                //动态数组中的数据源的键映射到布局文件对应的控件中
+                new String[]{"ItemText"},
+                new int[]{R.id.frequentwebsite_textView});
+
+        // 问答的适配器
+        SimpleAdapter wenDa_adapter = new SimpleAdapter(this,
+                //绑定的数据
+                listWenDaItem,
                 //每一行的布局
                 R.layout.item,
                 //动态数组中的数据源的键映射到布局文件对应的控件中
-//                new String[]{"ItemImage", "ItemText"},
-//                new int[]{R.id.imageView, R.id.textView});
                 new String[]{"ItemText"},
                 new int[]{R.id.textView});
 
-        listView.setAdapter(adapter);
+//        SimpleAdapter navigation_adapter1 = new SimpleAdapter(this,
+//                //绑定的数据
+//                listNavigationItem,
+//                //每一行的布局
+//                R.layout.navigation_item,
+//                //动态数组中的数据源的键映射到布局文件对应的控件中
+//                new String[]{"ItemText"},
+//                new int[]{R.id.navigation_bt});
+
+
+
+        ArticleAdapter articleAdapter=new ArticleAdapter(MainActivity.this,R.layout.item,titleList);
+        //Log.d("Aaron","titleList == " + titleList);
+        listView.setAdapter(articleAdapter);
+        //listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                ImageView msg=(ImageView)view.findViewById(R.id.iv_collect);
+//                msg.setOnClickListener(new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        int imagePosition = (Integer) v.getTag();
+//                        Toast.makeText(MainActivity.this, "你点击了红心的第" + imagePosition + "行", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                });
+                ImageView imageView =view.findViewById(R.id.iv_collect);
+                view.findViewById(R.id.iv_collect).setOnClickListener(new View.OnClickListener() {
+
+                     @Override
+                     public void onClick(View v) {
+                     //Toast.makeText(MainActivity.this, "你点击了红心的第" + i + "行", Toast.LENGTH_SHORT).show();titleList.get(i)
+                         //Log.d("Aaron","点击了红心的第" + i + "行==" + titleList.get(i));
+                         ArrayList<String> titleList = new ArrayList<String>();
+                         ArrayList<String> articleLinkList = new ArrayList<String>();
+                         titleList = parseJsonData("titleList");
+                         articleLinkList = parseJsonData("articleList");
+//                         Log.d("Aaron","点击了红心的第" + i + "行==" + titleList.get(i));
+//                         Log.d("Aaron","articleLinkList==" + articleLinkList.get(i));
+                        //adapter.notifyDataSetChanged();//更新listview
+                         articleIsClick++;
+                         //Log.d("Aaron","articleIsClick==" + articleIsClick);
+//                         if(isLogin1 == 0 && isLogin2 == 0) {
+//                             Toast.makeText(MainActivity.this, "请先登录!", Toast.LENGTH_SHORT).show();
+//                         }else {
+//                             if (articleIsClick % 2 == 0) {
+//                                 imageView.setImageResource(R.drawable.collect_true);
+//                                 Toast.makeText(MainActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+//                             } else {
+//                                 imageView.setImageResource(R.drawable.collect_false);
+//                                 Toast.makeText(MainActivity.this, "取消收藏", Toast.LENGTH_SHORT).show();
+//                             }
+//                         }
+                         CollectArticlePost collectArticlePost = new CollectArticlePost();
+                         collectArticlePost.setUrl("https://www.wanandroid.com/lg/collect/add/json");
+                         collectArticlePost.setTitle(titleList.get(i));
+                         collectArticlePost.setLink(articleLinkList.get(i));
+                         collectArticlePost.setAuthor("");
+                         //collectArticlePost.setCookie();
+                         DBHelper dbHelper = new DBHelper(MainActivity.this, "cookies.db", null, 1);
+                         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                         Cursor cursor = db.query("cookies", null, null, null, null, null, null);
+
+                         // 将游标移到开头
+                         cursor.moveToFirst();
+
+                         while (!cursor.isAfterLast()) { // 游标只要不是在最后一行之后，就一直循环
+
+                             int id=cursor.getInt(0);
+                             //Log.d("Aaron","id==" + id);
+                             String cookie=cursor.getString(1);
+                             collectArticlePost.setCookie(cookie);
+                             //Log.d("Aaron","cookie==" + cookie);
+                             //Log.d("Aaron","cookie==" + cookie);
+                             // 将游标移到下一行
+                             cursor.moveToNext();
+
+                         }
+                         collectArticlePost.start();
+
+                         if (articleIsClick % 2 == 0) {
+                             imageView.setImageResource(R.drawable.collect_true);
+                             //Log.d("Aaron","i==" + i + "title======" + titleList.get(i));
+                             Toast.makeText(MainActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+                         } else {
+                             imageView.setImageResource(R.drawable.collect_false);
+                             Toast.makeText(MainActivity.this, "取消收藏", Toast.LENGTH_SHORT).show();
+                         }
+
+                    }
+
+                });
+                if(articleIsClick % 2 == 0) {
+                    //Toast.makeText(MainActivity.this, "你点击了第" + i + "行", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+                    //Log.d("Aaron","getApplicationContext() == " + getApplicationContext());
+                    //it.putExtra("number",i);
+                    Bundle bundle = new Bundle();
+                    //传递的数据自己定义，我这边传递的数据是id为tv_content的文本内容
+                    bundle.putInt("number", i);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+
+            }
+
+
+        });
+
+
+
+        navigation_listView.setAdapter(navigation_adapter);
+        navigation_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(MainActivity.this, "你点击了第" + i + "行", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, (CharSequence) listNavigationItem.get(i), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, navigationNameList.get(i), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        wenda_listView.setAdapter(wenDa_adapter);
+        wenda_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Toast.makeText(MainActivity.this, "你点击了第" + i + "行", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
-                //Log.d("Aaron","getApplicationContext() == " + getApplicationContext());
-                //it.putExtra("number",i);
                 Bundle bundle = new Bundle();
-                //传递的数据自己定义，我这边传递的数据是id为tv_content的文本内容
                 bundle.putInt("number", i);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -213,10 +522,26 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
             }
         });
 
+
+
+//        navigation_listView1.setAdapter(navigation_adapter1);
+//        navigation_listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Toast.makeText(MainActivity.this, "你点击了第" + i + "行", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+
         mViews.add(viewHome);
-        mViews.add(LayoutInflater.from(this).inflate(R.layout.contact, null));
-        mViews.add(LayoutInflater.from(this).inflate(R.layout.popular_sites, null));
-        mViews.add(LayoutInflater.from(this).inflate(R.layout.me, null));
+
+        //mViews.add(LayoutInflater.from(this).inflate(R.layout.contact, null));
+        mViews.add(wenda_viewHome);
+        mViews.add(navigation_viewHome);
+        mViews.add(me_viewHome);
+        //mViews.add(LayoutInflater.from(this).inflate(R.layout.popular_sites, null));
+        //mViews.add(LayoutInflater.from(this).inflate(R.layout.me, null));
+
 
         mViewPager.setAdapter(new MyViewPagerAdapter());//设置一个适配器
         //对viewpager监听，让分页和底部图标保持一起滑动
@@ -264,6 +589,9 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         mViewPager.setCurrentItem(0);
     }
 
+
+
+
     //ViewPager适配器
     private class MyViewPagerAdapter extends PagerAdapter {
         @Override
@@ -290,72 +618,219 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         }
     }
 
-    public ArrayList<String> parseJsonData(String param) {     //設置一个str用來返回不同的值
+    public ArrayList<String> parseJsonData(String param) {     //設置一个param用來返回不同的值
         //文章Json数据
         Gson gson = new Gson();
 
-        //String str1 = "{\"data\":{\"curPage\":2,\"datas\":[{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23863,\"link\":\"https://www.jianshu.com/p/2f0ecf6ca08c\",\"niceDate\":\"1天前\",\"niceShareDate\":\"1天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1660137080000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1660137059000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"Android 重学系列 有趣的工具--智能指针与智能锁\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23853,\"link\":\"https://juejin.cn/post/7130144715063689253\",\"niceDate\":\"2天前\",\"niceShareDate\":\"2天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1660120326000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1660120326000,\"shareUser\":\"彭旭锐\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"飞书前端提到的竞态问题，在 Android 上怎么解决？\",\"type\":0,\"userId\":30587,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"张鸿洋\",\"canEdit\":false,\"chapterId\":543,\"chapterName\":\"Android技术周报\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23850,\"link\":\"https://www.wanandroid.com/blog/show/3401\",\"niceDate\":\"2天前\",\"niceShareDate\":\"2天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1660060800000,\"realSuperChapterId\":542,\"selfVisible\":0,\"shareDate\":1660061400000,\"shareUser\":\"\",\"superChapterId\":543,\"superChapterName\":\"技术周报\",\"tags\":[],\"title\":\"Android 技术周刊 （2022-08-03 ~ 2022-08-10）\",\"type\":0,\"userId\":-1,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"鸿洋\",\"canEdit\":false,\"chapterId\":408,\"chapterName\":\"鸿洋\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23864,\"link\":\"https://mp.weixin.qq.com/s/GJJHjbg9QK93kD4YzHnrAQ\",\"niceDate\":\"2天前\",\"niceShareDate\":\"1天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1660060800000,\"realSuperChapterId\":407,\"selfVisible\":0,\"shareDate\":1660143814000,\"shareUser\":\"\",\"superChapterId\":408,\"superChapterName\":\"公众号\",\"tags\":[{\"name\":\"公众号\",\"url\":\"/wxarticle/list/408/1\"}],\"title\":\"WebView遇到的各种问题解决方案分享\",\"type\":0,\"userId\":-1,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23849,\"link\":\"https://blog.csdn.net/chong_lai/article/details/126217107\",\"niceDate\":\"2天前\",\"niceShareDate\":\"2天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1660057874000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1660057856000,\"shareUser\":\"usagisang\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"Compose LazyGrid 相关介绍\",\"type\":0,\"userId\":126508,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23843,\"link\":\"https://juejin.cn/post/7129419242088169485\",\"niceDate\":\"2022-08-09 08:58\",\"niceShareDate\":\"2022-08-09 08:58\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1660006699000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1660006699000,\"shareUser\":\"equationl\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"使用 compose 的 Canvas 自定义绘制实现 LCD 显示数字效果\",\"type\":0,\"userId\":87590,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23834,\"link\":\"https://juejin.cn/post/7129306281650683935\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:35\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976695000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976531000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"裸辞-疫情-闭关-复习-大厂offer（二）\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23835,\"link\":\"https://juejin.cn/post/7129239231473385503\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:35\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976693000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976537000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"Flutter 实现 &ldquo;真&rdquo; 3D 动画效果，用纯代码实现立体 Dash 和 3D 掘金 Logo\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23836,\"link\":\"https://juejin.cn/post/7129157665732689934\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:35\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976690000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976541000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"&ldquo;终于懂了&rdquo; 系列：组件化框架 ARouter 完全解析（二）APT技术\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23837,\"link\":\"https://juejin.cn/post/7129063704829804580\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:36\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976688000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976563000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"音视频开发之旅（66) - 音频变速不变调的原理\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23838,\"link\":\"https://juejin.cn/post/7128947531471388709\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:36\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976687000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976567000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"Android实现倒计时的几种方案汇总\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23839,\"link\":\"https://juejin.cn/post/7128779284503592991\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:36\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976685000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976579000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"软件绘制 &amp; 硬件加速绘制 【DisplayList &amp; RenderNode】\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23840,\"link\":\"https://www.jianshu.com/p/22a398d615e3\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:37\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976683000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976649000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"深入理解Android Runtime\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23841,\"link\":\"https://www.jianshu.com/p/92fdc538bde4\",\"niceDate\":\"2022-08-09 00:38\",\"niceShareDate\":\"2022-08-09 00:37\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659976681000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659976653000,\"shareUser\":\"鸿洋\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"Android多用户的一些坑\",\"type\":0,\"userId\":2,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"鸿洋\",\"canEdit\":false,\"chapterId\":408,\"chapterName\":\"鸿洋\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23847,\"link\":\"https://mp.weixin.qq.com/s/ZpoPqFT8PtRiFHVpim8Xgw\",\"niceDate\":\"2022-08-09 00:00\",\"niceShareDate\":\"2天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659974400000,\"realSuperChapterId\":407,\"selfVisible\":0,\"shareDate\":1660057617000,\"shareUser\":\"\",\"superChapterId\":408,\"superChapterName\":\"公众号\",\"tags\":[{\"name\":\"公众号\",\"url\":\"/wxarticle/list/408/1\"}],\"title\":\"Android 技术周刊（第1期）：38篇技术文章\",\"type\":0,\"userId\":-1,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"郭霖\",\"canEdit\":false,\"chapterId\":409,\"chapterName\":\"郭霖\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23848,\"link\":\"https://mp.weixin.qq.com/s/Oxqa-MQi0-woqlB2EEMHZQ\",\"niceDate\":\"2022-08-09 00:00\",\"niceShareDate\":\"2天前\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659974400000,\"realSuperChapterId\":407,\"selfVisible\":0,\"shareDate\":1660057635000,\"shareUser\":\"\",\"superChapterId\":408,\"superChapterName\":\"公众号\",\"tags\":[{\"name\":\"公众号\",\"url\":\"/wxarticle/list/409/1\"}],\"title\":\"从XML到View显示在屏幕上，都发生了什么？\",\"type\":0,\"userId\":-1,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"\",\"canEdit\":false,\"chapterId\":502,\"chapterName\":\"自助\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23827,\"link\":\"https://mp.weixin.qq.com/s/LWDOaAQIkRnst2GLCAeAsw\",\"niceDate\":\"2022-08-08 08:54\",\"niceShareDate\":\"2022-08-08 08:54\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659920045000,\"realSuperChapterId\":493,\"selfVisible\":0,\"shareDate\":1659920045000,\"shareUser\":\"JsonChao\",\"superChapterId\":494,\"superChapterName\":\"广场Tab\",\"tags\":[],\"title\":\"三个值得深入思考的 Android 问答分享（第 2 期）\",\"type\":0,\"userId\":611,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"Android群英传\",\"canEdit\":false,\"chapterId\":413,\"chapterName\":\"Android群英传\",\"collect\":false,\"courseId\":13,\"desc\":\"\",\"descMd\":\"\",\"envelopePic\":\"\",\"fresh\":false,\"host\":\"\",\"id\":23831,\"link\":\"https://mp.weixin.qq.com/s/HKpmfz1vM7ojhZNHPy-cHg\",\"niceDate\":\"2022-08-08 00:00\",\"niceShareDate\":\"2022-08-08 23:06\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"\",\"publishTime\":1659888000000,\"realSuperChapterId\":407,\"selfVisible\":0,\"shareDate\":1659971175000,\"shareUser\":\"\",\"superChapterId\":408,\"superChapterName\":\"公众号\",\"tags\":[{\"name\":\"公众号\",\"url\":\"/wxarticle/list/413/1\"}],\"title\":\"Flutter混编工程之打通纹理之路\",\"type\":0,\"userId\":-1,\"visible\":1,\"zan\":0},{\"apkLink\":\"\",\"audit\":1,\"author\":\"RuffianZhong\",\"canEdit\":false,\"chapterId\":539,\"chapterName\":\"未分类\",\"collect\":false,\"courseId\":13,\"desc\":\"垃圾Flutter没有生命周期？\",\"descMd\":\"\",\"envelopePic\":\"https://www.wanandroid.com/resources/image/pc/default_project_img.jpg\",\"fresh\":false,\"host\":\"\",\"id\":23826,\"link\":\"https://www.wanandroid.com/blog/show/3400\",\"niceDate\":\"2022-08-07 22:23\",\"niceShareDate\":\"2022-08-07 22:23\",\"origin\":\"\",\"prefix\":\"\",\"projectLink\":\"https://github.com/RuffianZhong/flutter_lifecycle\",\"publishTime\":1659882235000,\"realSuperChapterId\":293,\"selfVisible\":0,\"shareDate\":1659882235000,\"shareUser\":\"\",\"superChapterId\":294,\"superChapterName\":\"开源项目主Tab\",\"tags\":[{\"name\":\"项目\",\"url\":\"/project/list/1?cid=539\"}],\"title\":\"垃圾Flutter没有生命周期？\",\"type\":0,\"userId\":-1,\"visible\":1,\"zan\":0}],\"offset\":20,\"over\":false,\"pageCount\":643,\"size\":20,\"total\":12844},\"errorCode\":0,\"errorMsg\":\"\"}";
         String str2 = "";
         GetNetDataThread getNetDataThread = new GetNetDataThread();
-        getNetDataThread.setUrl("https://www.wanandroid.com/article/list/1/json");
+        ArrayList<String> articleList = new ArrayList<String>();
+        ArrayList<String> titleList = new ArrayList<String>();
+        ArrayList<String> articleJsonList = new ArrayList<String>();
+
+        getNetDataThread.setUrl("https://www.wanandroid.com/article/list/");
+        //getNetDataThread.setUrl("https://www.wanandroid.com/article/list/0/json" );
         getNetDataThread.start();
-        //设置此函数用来确保多线程里的Content收到参数为止
-        while (getNetDataThread.getContent() == null){
-            try{
+////            设置此函数用来确保多线程里的Content收到参数为止
+////            Log.d("Aaron","i == " + i);
+//        while (getNetDataThread.getContent() == null) {
+//            try {
+//                Thread.sleep(100);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//            String str1 = getNetDataThread.getContent();
+//            Article article = gson.fromJson(str1, Article.class);
+//            List<Article.DataDTO.DatasDTO> datasDTOSList = article.getData().getDatas();
+//            for (int j = 0; j < datasDTOSList.size(); j++) {
+//                Article.DataDTO.DatasDTO datasDTO = datasDTOSList.get(j);
+//                String link = datasDTO.getLink();
+//                String title = datasDTO.getTitle();
+//                articleList.add(link);
+//                titleList.add(title);
+//                //Log.d("Aaron","Title==" + title );
+//
+//            }
+
+        while (getNetDataThread.getContent() == null && getNetDataThread.getCount() < 2) {
+            try {
                 Thread.sleep(100);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        String str1 = getNetDataThread.getContent();
 
-        ArrayList<String> articleList = new ArrayList<String>();
-        ArrayList<String> titleList = new ArrayList<String>();
-        Article article = gson.fromJson(str1,Article.class);
-        List<Article.DataDTO.DatasDTO> datasDTOSList = article.getData().getDatas();
+        for (int i = 0; i < 2; i++) {
+            String str1 = getNetDataThread.getArticleJsonList().get(i);
+            Article article = gson.fromJson(str1, Article.class);
+            List<Article.DataDTO.DatasDTO> datasDTOSList = article.getData().getDatas();
+            for (int j = 0; j < datasDTOSList.size(); j++) {
+                Article.DataDTO.DatasDTO datasDTO = datasDTOSList.get(j);
+                String link = datasDTO.getLink();
+                String title = datasDTO.getTitle();
+                articleList.add(link);
+                titleList.add(title);
+                //Log.d("Aaron","Title==" + title );
 
-        //getNetDataByOkHttp();
-        for (int i = 0; i < datasDTOSList.size(); i++) {
-            Article.DataDTO.DatasDTO datasDTO = datasDTOSList.get(i);
-            String link = datasDTO.getLink();
-            String title = datasDTO.getTitle();
-            articleList.add(link);
-            titleList.add(title);
+            }
+        }
+        if (param == "articleList") {
+            return articleList;
+        } else if (param == "titleList") {
+            return titleList;
+        } else
+            return articleList;
+
+    }
+
+    // 获取导航栏数据
+    public ArrayList<String> navigationJsonData(String param) {   //設置一个param用來返回不同的值
+        Gson gson = new Gson();
+        GetNetDataThread getNetDataThread = new GetNetDataThread();
+        ArrayList<String> navigationNameList = new ArrayList<String>();
+        getNetDataThread.setUrl("https://www.wanandroid.com/navi/json");
+        getNetDataThread.start();
+        while (getNetDataThread.getContent() == null) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        String navigationJson = getNetDataThread.getContent();
+
+        NavigationData navigationData = gson.fromJson(navigationJson, NavigationData.class);
+        List<NavigationData.DataDTO> datasDTOSList = navigationData.getData();
+        for (int j = 0; j < datasDTOSList.size(); j++) {
+            NavigationData.DataDTO datasDTO = datasDTOSList.get(j);
+
+            String navigationName = datasDTO.getName();
+            navigationNameList.add(navigationName);
             //Log.d("Aaron","Title==" + title );
 
         }
-        if(param == "articleList") {
-            return articleList;
+        switch (param) {
+            case "navigationName":
+                return navigationNameList;
         }
-        else if(param == "titleList"){
-            return titleList;
+
+        return navigationNameList;
+    }
+
+    //获取个人信息数据
+    public void userInfoJsonData(View me_viewHome) {
+        Gson gson = new Gson();
+        GetPostData userInfoGet = new GetPostData();
+        String userInfoJson;
+
+        String rank , username;
+        int level;
+        DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Cursor cursor = db.query("cookies", null, null, null, null, null, null);
+
+        // 将游标移到开头
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) { // 游标只要不是在最后一行之后，就一直循环
+
+            int id=cursor.getInt(0);
+            //Log.d("Aaron","id==" + id);
+            String cookie=cursor.getString(1);
+
+            userInfoGet.setCookie(cookie);
+            //Log.d("Aaron","cookie==" + cookie);
+            // 将游标移到下一行
+            cursor.moveToNext();
+
         }
-        else
-            return articleList;
-
+        userInfoGet.setUrl("https://wanandroid.com//user/lg/userinfo/json");
+        userInfoGet.start();
+        while (userInfoGet.getContent() == null) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        db.close();
+        userInfoJson = userInfoGet.getContent();
+        UserInfo userInfo = gson.fromJson(userInfoJson, UserInfo.class);
+        userInfo.getData().getCoinInfo().getLevel();
+        level = userInfo.getData().getCoinInfo().getLevel();
+        rank = userInfo.getData().getCoinInfo().getRank();
+        username = userInfo.getData().getUserInfo().getPublicName();
+        //Log.d("Aaron", "level是==" + level);
+        TextView userInfoLevel_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_level);
+        TextView userInfoRank_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_ranking);
+        TextView userInfoName_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_name);
+        userInfoLevel_tv.setText(String.valueOf(level));
+        userInfoRank_tv.setText(rank);
+        userInfoName_tv.setText(username);
+        Log.d("Aaron", "数据是==" + userInfoGet.getContent());
+        //return userInfoGet.getContent();
     }
 
+    //获取问答数据
+    public ArrayList<String> wendaJsonData(String param) {     //設置一个param用來返回不同的值
+        //文章Json数据
+        Gson gson = new Gson();
 
+        String str2 = "";
+        GetNetDataThread getNetDataThread = new GetNetDataThread();
+        ArrayList<String> wenDaLinkList = new ArrayList<String>();
+        ArrayList<String> wenDatitleList = new ArrayList<String>();
 
+        getNetDataThread.setUrl("https://wanandroid.com/wenda/list/0/json");
+        getNetDataThread.start();
 
+        while (getNetDataThread.getContent() == null) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-    public static String getJsonStr() {
-        return jsonStr;
+        str2 = getNetDataThread.getContent();
+        WenDa wenDa = gson.fromJson(str2, WenDa.class);
+        List<WenDa.DataDTO.DatasDTO> datasDTOSList = wenDa.getData().getDatas();
+        for (int j = 0; j < datasDTOSList.size(); j++) {
+            WenDa.DataDTO.DatasDTO datasDTO = datasDTOSList.get(j);
+            String link = datasDTO.getLink();
+            String title = datasDTO.getTitle();
+            wenDaLinkList.add(link);
+            wenDatitleList.add(title);
+            //Log.d("Aaron","Title==" + title );
+
+        }
+
+        switch (param) {
+            case "wenDaLink":
+                return wenDaLinkList;
+            case "wenDaTitle":
+                return wenDatitleList;
+
+        }
+
+        return wenDaLinkList;
+
     }
-
-    public static void setJsonStr(String jsonStr) {
-        MainActivity.jsonStr = jsonStr;
-    }
-
-
-
-
-
-
-
-
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/item_press"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_xlarge"
+    android:paddingTop="16dp"
+    android:paddingRight="30dp"
+    tools:ignore="MissingPrefix"
+    android:background="#ffffff"
+    android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginTop="10dp">
+
+
+    <TextView
+        android:id="@+id/true_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        tools:text="标题"
+        android:textSize="20sp"/>
+
+    <ImageView
+        android:id="@+id/true_iv_collect"
+        android:layout_width="55dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="1dp"
+        android:src="@drawable/collect_true" />
+
+
+</RelativeLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="recyclerview" type="id" />
+    <item name="smartrefreshlayout" type="id" />
+    <item name="tablayout" type="id" />
+    <item name="viewpager" type="id" />
+    <!--ToolBar-->
+    <item name="default_toolbar_root" type="id" />
+    <item name="default_toolbar_statusbar_placeholder" type="id" />
+    <item name="default_toolbar_textview_title" type="id" />
+    <item name="default_toolbar_imageview_back" type="id" />
+    <item name="default_toolbar_tablayout" type="id" />
+</resources>

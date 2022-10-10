@@ -1,9 +1,12 @@
 package com.example.wanandroidapp.login;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,7 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wanandroidapp.MainActivity;
 import com.example.wanandroidapp.R;
+import com.example.wanandroidapp.Tool.DBHelper;
 import com.example.wanandroidapp.Tool.UserLoginPost;
+import com.example.wanandroidapp.bean.ResponseLogin;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -35,6 +41,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText et_User, et_Psw;
     private CheckBox cb_rmbPsw;
     private String userName;
+    private String cookieStr;
+
+    public String getCookieStr() {
+        return cookieStr;
+    }
+
+    public void setCookieStr(String cookieStr) {
+        this.cookieStr = cookieStr;
+    }
+
     private SharedPreferences.Editor editor;
 
     /**
@@ -82,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         cb_rmbPsw = findViewById(R.id.cb_rmbPsw);
         Button btn_Login = findViewById(R.id.btn_Login);
         TextView tv_register = findViewById(R.id.tv_Register);
+        et_User.setText("zhou7433");
+        et_Psw.setText("123456");
         //设置点击事件监听器
         btn_Login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
@@ -134,6 +152,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 editor.putBoolean("flag",true);
                                 editor.putString("user",user.getName());
                                 editor.putString("psw",user.getPassword());
+                                Log.d("Aaron","user.getName == " + user.getName());
+                                Log.d("Aaron","user.getPassword == " + user.getPassword());
                                 editor.apply();
                                 match2 = true;
                             }else {
@@ -151,28 +171,78 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     UserLoginPost userLoginPost = new UserLoginPost();
                     userLoginPost.setUrl("https://www.wanandroid.com/user/login");
-                    userLoginPost.setUsername("zhou7423");
-                    userLoginPost.setPassword("123456");
+                    userLoginPost.setUsername(name);
+                    userLoginPost.setPassword(password);
                     userLoginPost.start();
-                    Log.d("Aaron","name == " + name);
-                    Log.d("Aaron","password == " + password);
-                    if (match) {
+
+                    //设置此函数用来确保多线程里的Content收到参数为止
+                    while (userLoginPost.getUserlogin_json() == null){
+                        try{
+                            Thread.sleep(100);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                    while (userLoginPost.getCookiestr() == null){
+                        try{
+                            Thread.sleep(100);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    db.delete("cookies","u_id = 1",null);
+                    ContentValues cValue = new ContentValues();
+                    cValue.put("u_id",1);
+                    cValue.put("cookie",userLoginPost.getCookiestr());
+                    db.insert("cookies",null ,cValue);
+                    db.close();
+
+                    Gson gson = new Gson();
+                    String user_login_json = userLoginPost.getUserlogin_json();
+                    //Log.d("Aaron","json == " + user_login_json);
+                    ResponseLogin responseLogin = gson.fromJson(user_login_json,ResponseLogin.class);
+                    responseLogin.getErrorCode();
+                    //Log.d("Aaron","cookiestr == " + userLoginPost.getCookiestr());
+                    //Log.d("Aaron","cookiestr == " + userLoginPost.getCookiestr());
+                    //Bundle bundle = new Bundle();
+                    //this.cookieStr = userLoginPost.getCookiestr();
+                    //Log.d("Aaron","在Login里面---cookiestr == " + userLoginPost.getCookiestr());
+                    //Log.d("Aaron","userLoginPost.getDatalist().get(0) == " + userLoginPost.getDatalist().get(0));
+//                    String user_login_json = userLoginPost.getDatalist().get(0);
+//                    Log.d("Aaron","json == " + user_login_json);
+//                    //Log.d("Aaron","json == " + user_login_json);
+//                    ResponseLogin responseLogin = gson.fromJson(user_login_json,ResponseLogin.class);
+//                    responseLogin.getErrorCode();
+
+
+//                    Log.d("Aaron","name == " + name);
+//                    Log.d("Aaron","password == " + password);
+//                    Log.d("Aaron","ErrorCode == " + responseLogin.getErrorCode());
+
+                    if (responseLogin.getErrorCode() == 0) {
                         if(match2){
                             Toast.makeText(this, "成功记住密码", Toast.LENGTH_SHORT).show();
+                            //Log.d("Aaron","记住密码");
                             cb_rmbPsw.setChecked(true);
                         }
                         Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
+
                         Runnable target;
                         //用线程启动
+
                         Thread thread = new Thread(){
                             @Override
                             public void run(){
                                 try {
-                                    sleep(2000);//2秒 模拟登录时间
+                                    sleep(100);//0.1秒 模拟登录时间
                                     String user_name = userName;
                                     Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);//设置自己跳转到成功的界面
 
-                                    //intent1.putExtra("user_name",user_name);
+                                    //intent1.putExtra("bundle",bundle);
+
                                     startActivity(intent1);
                                     finish();
                                 }catch (Exception e){
