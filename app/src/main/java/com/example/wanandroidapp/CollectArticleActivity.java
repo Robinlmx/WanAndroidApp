@@ -118,7 +118,8 @@ public class CollectArticleActivity extends AppCompatActivity {
                     //it.putExtra("number",i);
                     Bundle bundle = new Bundle();
                     //传递的数据自己定义，我这边传递的数据是id为tv_content的文本内容
-                    bundle.putInt("number", i);
+                    //bundle.putInt("number", i);
+                    bundle.putString("url",collectArticleJsonData("articleList").get(i));
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }

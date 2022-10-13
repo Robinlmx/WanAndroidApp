@@ -13,4 +13,5 @@
     <string name="plsemail">plsemail</string>
     <string name="plsu">plsu</string>
     <string name="share_view">shareView</string>
+    <string name="action_settings">Settings</string>
 </resources>

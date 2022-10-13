@@ -89,4 +89,9 @@
     <!-- 36 -->
     <dimen name="size_20">20sp</dimen>
 
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="btn_height">40dp</dimen>
+    <dimen name="btn_width">50dp</dimen>
+
 </resources>

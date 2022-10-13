@@ -3,41 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="热门网站"-->
-<!--        android:textSize="30sp"-->
-<!--        android:textColor="#000000"-->
-<!--        android:layout_gravity="center" />-->
+
     <ListView
         android:id="@+id/navigation_listView"
         android:layout_width="110dp"
         android:background="#E5E5E5"
         android:layout_height="match_parent"
         android:scrollbars="none"/>
-<!--    <com.example.wanandroidapp.Tool.CircleImageView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
-<!--    <com.example.wanandroidapp.Tool.VerticalViewPager-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/navigationRecyclerView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content" />-->
-
-<!--    <ListView-->
-<!--        android:divider="@null"-->
-<!--        android:id="@+id/navigation_listView1"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent" />-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
 
 

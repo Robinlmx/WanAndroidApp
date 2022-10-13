@@ -39,10 +39,11 @@ public class WebViewActivity extends AppCompatActivity {
         //设置JavaScrip
         mWVmhtml.getSettings().setJavaScriptEnabled(true);
         Bundle bundle = getIntent().getExtras();
-        int number = bundle.getInt("number");
+        //int number = bundle.getInt("number");
+        String url = bundle.getString("url");
         //访问网址
-        mWVmhtml.loadUrl(articleLinkList.get(number));
-
+        //mWVmhtml.loadUrl(articleLinkList.get(number));
+        mWVmhtml.loadUrl(url);
         mWVmhtml.setWebViewClient(new MyWebViewClient());
 
 
