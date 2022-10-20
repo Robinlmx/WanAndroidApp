@@ -538,15 +538,15 @@ public class MainActivity extends Activity implements GetViewPagerItemView,Searc
         ListView wenda_listView = wenda_viewHome.findViewById(R.id.wenda_listView);
 
 
-//        //第一次进app，默认为用户7433登陆
-//        DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//        db.delete("cookies","u_id = 1",null);
-//        ContentValues cValue = new ContentValues();
-//        cValue.put("u_id",1);
-//        cValue.put("cookie","token_pass_wanandroid_com=5d9b90bcb70640183e09d1e755ead823;loginUserName_wanandroid_com=zhou7433;JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
-//        db.insert("cookies",null ,cValue);
-//        db.close();
+        //第一次进app，默认为用户7433登陆
+        DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("cookies","u_id = 1",null);
+        ContentValues cValue = new ContentValues();
+        cValue.put("u_id",1);
+        cValue.put("cookie","token_pass_wanandroid_com=5d9b90bcb70640183e09d1e755ead823;loginUserName_wanandroid_com=zhou7433;JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
+        db.insert("cookies",null ,cValue);
+        db.close();
 
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
