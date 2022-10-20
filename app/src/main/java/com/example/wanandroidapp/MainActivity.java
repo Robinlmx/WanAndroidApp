@@ -236,6 +236,27 @@ public class MainActivity extends Activity implements GetViewPagerItemView,Searc
 
         //取出缓存
         String imageUrl = SPUtils.getString("imageUrl",null,this);
+
+        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
+        String username = spfRecord.getString("username", "");
+        UpLoadAvatarDBHelper upLoadAvatarDBHelper = new UpLoadAvatarDBHelper(this, "avatars.db", null, 1);
+        SQLiteDatabase db = upLoadAvatarDBHelper.getWritableDatabase();
+        Cursor cursor = db.query("avatars", null, "username=?", new String[]{username}, null, null, null);
+        Log.d("Aaron","cursor.getCount()==" + cursor.getCount());
+        if(cursor.getCount() == 1){
+            cursor.moveToFirst();
+//            byte[] in=cursor.getString(2);
+//            bmpout=BitmapFactory.decodeByteArray(in,0,in.length);
+
+            ivAvatar = view.findViewById(R.id.iv_head);
+            @SuppressLint("Range") byte[] in=cursor.getBlob(cursor.getColumnIndex("express_img"));
+//            Bitmap bmpout=BitmapFactory.decodeByteArray(in,0,in.length);
+////            Log.d("Aaron","cursor.getColumnIndex(\"express_img\")==" + cursor.getString(2));
+//            ivAvatar.setImageBitmap(bmpout);
+            @SuppressLint("Range") ByteArrayInputStream stream = new ByteArrayInputStream(cursor.getBlob(cursor.getColumnIndex("express_img")));
+            ivAvatar.setImageDrawable(Drawable.createFromStream(stream, "img"));
+        }
+        db.close();
 //        if(imageUrl != null){
 //            Glide.with(this).load(imageUrl).apply(requestOptions).into(ivHead);
 //        }
@@ -519,11 +540,10 @@ public class MainActivity extends Activity implements GetViewPagerItemView,Searc
 //        Log.d("Aaron","account==" + account);
 //        Log.d("Aaron","image64==" + image64);
 
-
         mViews = new ArrayList<View>();//加载，添加视图
 
         article_iv = findViewById(R.id.iv_collect);
-
+        int isLogin = 0;
 
 
         View viewHome = LayoutInflater.from(this).inflate(R.layout.home, null);
@@ -537,16 +557,23 @@ public class MainActivity extends Activity implements GetViewPagerItemView,Searc
         ListView navigation_listView = navigation_viewHome.findViewById(R.id.navigation_listView);
         ListView wenda_listView = wenda_viewHome.findViewById(R.id.wenda_listView);
 
-
+        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
+        String cookiestr = spfRecord.getString("cookie", "");
+        isLogin = spfRecord.getInt("isLogin", 0);
         //第一次进app，默认为用户7433登陆
         DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete("cookies","u_id = 1",null);
+        SQLiteDatabase userinfo_db = dbHelper.getWritableDatabase();
+        userinfo_db.delete("cookies","u_id = 1",null);
         ContentValues cValue = new ContentValues();
         cValue.put("u_id",1);
-        cValue.put("cookie","token_pass_wanandroid_com=5d9b90bcb70640183e09d1e755ead823;loginUserName_wanandroid_com=zhou7433;JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
-        db.insert("cookies",null ,cValue);
-        db.close();
+        if(isLogin == 1){
+            cValue.put("cookie",cookiestr);
+        }else{
+            cValue.put("cookie","token_pass_wanandroid_com=5d9b90bcb70640183e09d1e755ead823;loginUserName_wanandroid_com=zhou7433;JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
+        }
+
+        userinfo_db.insert("cookies",null ,cValue);
+        userinfo_db.close();
 
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
@@ -588,26 +615,7 @@ public class MainActivity extends Activity implements GetViewPagerItemView,Searc
 //        }
 //        avatar_db.close();
 
-        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
-        String username = spfRecord.getString("username", "");
-        UpLoadAvatarDBHelper upLoadAvatarDBHelper = new UpLoadAvatarDBHelper(this, "avatars.db", null, 1);
-        SQLiteDatabase db = upLoadAvatarDBHelper.getWritableDatabase();
-        Cursor cursor = db.query("avatars", null, "username=?", new String[]{username}, null, null, null);
-        Log.d("Aaron","cursor.getCount()==" + cursor.getCount());
-        if(cursor.getCount() == 1){
-            cursor.moveToFirst();
-//            byte[] in=cursor.getString(2);
-//            bmpout=BitmapFactory.decodeByteArray(in,0,in.length);
 
-            ivAvatar = view.findViewById(R.id.iv_head);
-            @SuppressLint("Range") byte[] in=cursor.getBlob(cursor.getColumnIndex("express_img"));
-            Bitmap bmpout=BitmapFactory.decodeByteArray(in,0,in.length);
-//            Log.d("Aaron","cursor.getColumnIndex(\"express_img\")==" + cursor.getString(2));
-            ivAvatar.setImageBitmap(bmpout);
-//            @SuppressLint("Range") ByteArrayInputStream stream = new ByteArrayInputStream(cursor.getBlob(cursor.getColumnIndex("express_img")));
-//            ivAvatar.setImageDrawable(Drawable.createFromStream(stream, "img"));
-        }
-        db.close();
 
         navigationNameList = navigationJsonData("navigationName");
         for (int i = 0; i < navigationNameList.size(); i++) {

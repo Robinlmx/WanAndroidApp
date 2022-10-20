@@ -200,6 +200,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     db.insert("cookies",null ,cValue);
                     db.close();
 
+                    SharedPreferences spf = getSharedPreferences("spfRecord", MODE_PRIVATE);
+                    SharedPreferences.Editor edit = spf.edit();
+                    edit.putString("cookie", userLoginPost.getCookiestr());
+                    edit.putInt("isLogin", 1);
+                    edit.apply();
+
                     Gson gson = new Gson();
                     String user_login_json = userLoginPost.getUserlogin_json();
                     //Log.d("Aaron","json == " + user_login_json);
