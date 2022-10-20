@@ -5,7 +5,9 @@
       <map>
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable-v24/btn_search_bg.xml" value="0.2385" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable-v24/search_edittext_shape.xml" value="0.2385" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/activity_edit_profile_button.xml" value="0.1815" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/bg_press_color_surface.xml" value="0.1955" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/edit_text_bg.xml" value="0.1825" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/ic_time.xml" value="0.2015" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/icon_like_article_not_selected.xml" value="0.2015" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/round_bg.xml" value="0.1925" />
@@ -13,16 +15,19 @@
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/drawable/shape_tag_red_background_normal.xml" value="0.2015" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_agent_web.xml" value="0.1859375" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_collectarticle.xml" value="0.17083333333333334" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_edit_profile.xml" value="0.22" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_login.xml" value="0.184375" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_main.xml" value="0.2890625" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_registered.xml" value="0.25" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_splash.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_user_profilectivity.xml" value="0.17395833333333333" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_userinfo.xml" value="0.22" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/activity_web_view.xml" value="0.1859375" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/agentweb_error_page.xml" value="0.1859375" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/article_webview.xml" value="0.2890625" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/banner.xml" value="0.2890625" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/contact.xml" value="0.2890625" />
+        <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/dialog_bottom.xml" value="0.2786458333333333" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/falseitem.xml" value="0.17083333333333334" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/frequentwebsite.xml" value="0.15260416666666668" />
         <entry key="..\:/AndroidWorkSpace/WanAndroidapp/app/src/main/res/layout/frequentwebsite_item.xml" value="0.36614583333333334" />

@@ -37,10 +37,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="260dp">
 
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/civ_user_icon"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_head"
+                        android:layout_width="95dp"
+                        android:layout_height="95dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="80dp"
                         android:clickable="true"
@@ -48,13 +48,28 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_please_login"
                         app:riv_corner_radius="80dp"
-                        app:riv_mutate_background="true" />
+                        app:riv_mutate_background="true"
+                        app:shapeAppearanceOverlay="@style/circleImageStyle" />
+
+<!--                    <com.makeramen.roundedimageview.RoundedImageView-->
+<!--                        android:id="@+id/civ_user_icon"-->
+<!--                        android:layout_width="80dp"-->
+<!--                        android:layout_height="80dp"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_marginTop="80dp"-->
+<!--                        android:clickable="true"-->
+<!--                        android:onClick="onClick"-->
+<!--                        android:scaleType="centerCrop"-->
+<!--                        android:src="@drawable/ic_please_login"-->
+<!--                        app:riv_corner_radius="80dp"-->
+<!--                        app:riv_mutate_background="true" />-->
+
 
                     <TextView
                         android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/civ_user_icon"
+                        android:layout_below="@+id/iv_head"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
                         android:text="GOWEII"
@@ -250,7 +265,8 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:paddingLeft="16dp"
-                        android:paddingRight="16dp">
+                        android:paddingRight="16dp"
+                        android:onClick="changeAvatar">
 
                         <ImageView
                             android:layout_width="18dp"
@@ -266,7 +282,7 @@
                             android:layout_marginRight="10dp"
                             android:layout_weight="1"
                             android:singleLine="true"
-                            android:text="我的书签"
+                            android:text="修改头像"
                             android:textSize="@dimen/text_content" />
 
                         <ImageView

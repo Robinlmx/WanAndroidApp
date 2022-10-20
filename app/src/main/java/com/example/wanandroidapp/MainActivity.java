@@ -1,10 +1,20 @@
 package com.example.wanandroidapp;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +38,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -35,6 +46,8 @@ import com.example.wanandroidapp.Adapter.SearchAdapter;
 import com.example.wanandroidapp.Banner.Banner;
 import com.example.wanandroidapp.Banner.GetViewPagerItemView;
 import com.example.wanandroidapp.Banner.GsonBannerData;
+import com.example.wanandroidapp.SQLite.AvatarDBHelper;
+import com.example.wanandroidapp.SQLite.UpLoadAvatarDBHelper;
 import com.example.wanandroidapp.Thread.GetNetDataThread;
 import com.example.wanandroidapp.Adapter.ArticleAdapter;
 import com.example.wanandroidapp.Tool.CircleImageView;
@@ -50,16 +63,34 @@ import com.example.wanandroidapp.bean.UserInfo;
 import com.example.wanandroidapp.bean.WenDa;
 import com.example.wanandroidapp.login.LoginActivity;
 import com.example.wanandroidapp.model.Bean;
+import com.example.wanandroidapp.util.BitmapUtils;
+import com.example.wanandroidapp.util.CameraUtils;
+import com.example.wanandroidapp.util.ImageUtil;
+import com.example.wanandroidapp.util.SPUtils;
 import com.example.wanandroidapp.widge.SearchView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 
 
-public class MainActivity extends AppCompatActivity implements GetViewPagerItemView,SearchView.SearchViewListener{
+public class MainActivity extends Activity implements GetViewPagerItemView,SearchView.SearchViewListener{
     private View view;
     private ViewPager mViewPager;
     private ViewPager mViewBannerPager;
@@ -73,7 +104,10 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
     private Banner mBanner;
     private final int[] mDrawableIds = {R.mipmap.icon_true, R.mipmap.icon_true, R.mipmap.icon_true, R.mipmap.icon_true, R.mipmap.icon_true};
     private List<String> mItemViews = new ArrayList();
+    private ImageView headView = null;
     ArrayList<String> navigationNameList = new ArrayList<String>();
+    private RoundedImageView ivTouXiangAvatar;
+
     /**
      * 搜索结果列表view
      */
@@ -152,14 +186,41 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         this.navigationNameList = navigationNameList;
     }
 
+    //权限请求
+    private RxPermissions rxPermissions;
+
+    //是否拥有权限
+    private boolean hasPermissions = false;
+
+    //底部弹窗
+    private BottomSheetDialog bottomSheetDialog;
+    //弹窗视图
+    private View bottomView;
+
+    //存储拍完照后的图片
+    private File outputImagePath;
+    //启动相机标识
+    public static final int TAKE_PHOTO = 1;
+    //启动相册标识
+    public static final int SELECT_PHOTO = 2;
+
+    //图片控件
+    private ShapeableImageView ivHead ,ivAvatar;
+    //Base64
+    private String base64Pic;
+    //拍照和相册获取图片的Bitmap
+    private Bitmap orc_bitmap;
+    private Bitmap avatar_bitmap;
+    //Glide请求图片选项配置
+    private RequestOptions requestOptions = RequestOptions.circleCropTransform()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)//不做磁盘缓存
+            .skipMemoryCache(true);//不做内存缓存
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-//        exitLoginView = findViewById(R.id.tv_login_out);
-//        exitLoginView.setVisibility(View.GONE);
         initView();//初始化数据
 
         //初始化轮播图数据
@@ -170,26 +231,15 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         initSearchDatas();
         initSearchViews();
 
+        //检查版本
+        checkVersion();
 
-//        if(isLogin1 == 1 || isLogin2 == 1) {
-//            exitLoginView.setVisibility(View.VISIBLE);
-//        }else{
-//            exitLoginView.setVisibility(View.GONE);
+        //取出缓存
+        String imageUrl = SPUtils.getString("imageUrl",null,this);
+//        if(imageUrl != null){
+//            Glide.with(this).load(imageUrl).apply(requestOptions).into(ivHead);
 //        }
 
-
-//        try {
-//            Bundle bundle = getIntent().getExtras();
-//            String cookiestr = bundle.getString("cookiestr");
-//            Log.d("Aaron","传入的cookiestr == " + cookiestr);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-
-//        Intent intent=getIntent();
-//        Bundle bundle=intent.getBundleExtra("bundle");
-//        String cookiestr = bundle.getString("cookiestr");
-//        Log.d("Aaron","传入的cookiestr == " + cookiestr);
 
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -226,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
 
 
     }
+
 
     /**
      * 初始化搜索视图
@@ -383,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
                 Intent it = new Intent(MainActivity.this, UserInfoActivity.class);
                 startActivity(it);
                 break;
-            case R.id.civ_user_icon:
+            case R.id.iv_head:
                 //Log.d("Aaron","点击头像");
                 it = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(it);
@@ -461,16 +512,19 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         tab3 = findViewById(R.id.rb_popular_sites);
         tab4 = findViewById(R.id.rb_me);
         view=View.inflate(getApplicationContext(),R.layout.me,null);
-        //exitLoginView = findViewById(R.id.tv_login_out);
-//        exitLoginView = findViewById(R.id.tv_login_out);
-//        exitLoginView.setBackgroundColor(Color.WHITE);
+        ivTouXiangAvatar = findViewById(R.id.iv_head);
+//        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
+//        String account = spfRecord.getString("account", "");
+//        String image64 = spfRecord.getString("image_64", "");
+//        Log.d("Aaron","account==" + account);
+//        Log.d("Aaron","image64==" + image64);
 
-
-        //exitLoginView.setVisibility(View.VISIBLE);
 
         mViews = new ArrayList<View>();//加载，添加视图
 
         article_iv = findViewById(R.id.iv_collect);
+
+
 
         View viewHome = LayoutInflater.from(this).inflate(R.layout.home, null);
         //View viewHome = LayoutInflater.from(this).inflate(R.layout.test_viewhome,null);
@@ -482,8 +536,18 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         ListView listView = viewHome.findViewById(R.id.listView);
         ListView navigation_listView = navigation_viewHome.findViewById(R.id.navigation_listView);
         ListView wenda_listView = wenda_viewHome.findViewById(R.id.wenda_listView);
-        //ListView navigation_listView1 = navigation_viewHome.findViewById(R.id.navigation_listView1);
-        //ListView navigation_listView = navigation_viewHome.findViewById(R.id.listView);
+
+
+//        //第一次进app，默认为用户7433登陆
+//        DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        db.delete("cookies","u_id = 1",null);
+//        ContentValues cValue = new ContentValues();
+//        cValue.put("u_id",1);
+//        cValue.put("cookie","token_pass_wanandroid_com=5d9b90bcb70640183e09d1e755ead823;loginUserName_wanandroid_com=zhou7433;JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
+//        db.insert("cookies",null ,cValue);
+//        db.close();
+
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
         ArrayList<HashMap<String, Object>> listNavigationItem = new ArrayList<>();
@@ -498,18 +562,54 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
         //Log.d("Aaron","问答数据==" + wendaJsonData("wenDaLink"));
         wenDaLinkList = wendaJsonData("wenDaLink");
         wenDaTitleList = wendaJsonData("wenDaTitle");
-        //Log.d("Aaron","返回的数据是==" + navigationJsonData("navigationName"));
 //        if(isLogin1 == 1 || isLogin2 == 1){
 //            exitLoginView.setVisibility(View.VISIBLE);
 //        }
 
-
         userInfoJsonData(me_viewHome);
+        //设置头像
+//        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
+//        String username = spfRecord.getString("username", "");
+//        AvatarDBHelper avatarDBHelper = new AvatarDBHelper(this, "avatars.db", null, 1);
+//        SQLiteDatabase avatar_db = avatarDBHelper.getWritableDatabase();
+//        Cursor cursor = avatar_db.query("avatars", null, "username=?", new String[]{username}, null, null, null);
+//        Log.d("Aaron","cursor.getCount()==" + cursor.getCount());
+//
+//        //Log.d("Aaron","base64==" + cursor.getString(2));
+//        if(cursor.getCount() == 1){
+//            cursor.moveToFirst();
+//            avatar_bitmap = BitmapUtils.base64ToBitmap(cursor.getString(2));
+//
+//            //Log.d("Aaron","base64==" + cursor.getString(2));
+//            //Log.d("Aaron","avatar_bitmap==" + avatar_bitmap);
+//            ivAvatar = view.findViewById(R.id.iv_head);
+//            //Log.d("Aaron","ivAvatar==" + ivAvatar);
+//            ivAvatar.setImageBitmap(avatar_bitmap);
+//        }
+//        avatar_db.close();
 
-        //navigationNameList = navigationJsonData("navigationName");
+        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
+        String username = spfRecord.getString("username", "");
+        UpLoadAvatarDBHelper upLoadAvatarDBHelper = new UpLoadAvatarDBHelper(this, "avatars.db", null, 1);
+        SQLiteDatabase db = upLoadAvatarDBHelper.getWritableDatabase();
+        Cursor cursor = db.query("avatars", null, "username=?", new String[]{username}, null, null, null);
+        Log.d("Aaron","cursor.getCount()==" + cursor.getCount());
+        if(cursor.getCount() == 1){
+            cursor.moveToFirst();
+//            byte[] in=cursor.getString(2);
+//            bmpout=BitmapFactory.decodeByteArray(in,0,in.length);
+
+            ivAvatar = view.findViewById(R.id.iv_head);
+            @SuppressLint("Range") byte[] in=cursor.getBlob(cursor.getColumnIndex("express_img"));
+            Bitmap bmpout=BitmapFactory.decodeByteArray(in,0,in.length);
+//            Log.d("Aaron","cursor.getColumnIndex(\"express_img\")==" + cursor.getString(2));
+            ivAvatar.setImageBitmap(bmpout);
+//            @SuppressLint("Range") ByteArrayInputStream stream = new ByteArrayInputStream(cursor.getBlob(cursor.getColumnIndex("express_img")));
+//            ivAvatar.setImageDrawable(Drawable.createFromStream(stream, "img"));
+        }
+        db.close();
+
         navigationNameList = navigationJsonData("navigationName");
-        //Log.d("Aaron", "navigationNameList  主函数的数据是==" + navigationNameList);
-        //circleImageView.setNavigationNameList(navigationNameList);
         for (int i = 0; i < navigationNameList.size(); i++) {
             HashMap<String, Object> map = new HashMap<>();
             textView = (TextView) findViewById(R.id.textView);
@@ -771,9 +871,202 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
             }
         });
         mViewPager.setCurrentItem(0);
+
     }
 
 
+    /**
+     * 检查版本
+     */
+    private void checkVersion() {
+        //Android6.0及以上版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //如果你是在Fragment中，则把this换成getActivity()
+            rxPermissions = new RxPermissions(this);
+            //权限请求
+            rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .subscribe(granted -> {
+                        if (granted) {//申请成功
+                            showMsg("已获取权限");
+                            hasPermissions = true;
+                        } else {//申请失败
+                            showMsg("权限未开启");
+                            hasPermissions = false;
+                        }
+                    });
+        } else {
+            //Android6.0以下
+            showMsg("无需请求动态权限");
+        }
+    }
+
+    /**
+     * 更换头像
+     *
+     * @param view
+     */
+    public void changeAvatar(View view) {
+        bottomSheetDialog = new BottomSheetDialog(this);
+        bottomView = getLayoutInflater().inflate(R.layout.dialog_bottom, null);
+        bottomSheetDialog.setContentView(bottomView);
+        //bottomSheetDialog.getWindow().findViewById(R.id.design_bottom_sheet).setBackgroundColor(Color.TRANSPARENT);
+        TextView tvTakePictures = bottomView.findViewById(R.id.tv_take_pictures);
+        TextView tvOpenAlbum = bottomView.findViewById(R.id.tv_open_album);
+        TextView tvCancel = bottomView.findViewById(R.id.tv_cancel);
+
+        //拍照
+        tvTakePictures.setOnClickListener(v -> {
+            takePhoto();
+            showMsg("拍照");
+            bottomSheetDialog.cancel();
+        });
+        //打开相册
+        tvOpenAlbum.setOnClickListener(v -> {
+            openAlbum();
+            showMsg("打开相册");
+            bottomSheetDialog.cancel();
+        });
+        //取消
+        tvCancel.setOnClickListener(v -> {
+            bottomSheetDialog.cancel();
+        });
+        //底部弹窗显示
+        bottomSheetDialog.show();
+    }
+
+    /**
+     * 拍照
+     */
+    private void takePhoto() {
+        if (!hasPermissions) {
+            showMsg("未获取到权限");
+            checkVersion();
+            return;
+        }
+        SimpleDateFormat timeStampFormat = new SimpleDateFormat(
+                "yyyy_MM_dd_HH_mm_ss");
+        String filename = timeStampFormat.format(new Date());
+        outputImagePath = new File(getExternalCacheDir(),
+                filename + ".jpg");
+        Intent takePhotoIntent = CameraUtils.getTakePhotoIntent(this, outputImagePath);
+        // 开启一个带有返回值的Activity，请求码为TAKE_PHOTO
+        startActivityForResult(takePhotoIntent, TAKE_PHOTO);
+    }
+
+    /**
+     * 打开相册
+     */
+    private void openAlbum() {
+        if (!hasPermissions) {
+            showMsg("未获取到权限");
+            checkVersion();
+            return;
+        }
+        startActivityForResult(CameraUtils.getSelectPhotoIntent(), SELECT_PHOTO);
+    }
+
+    /**
+     * 返回到Activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            //拍照后返回
+            case TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    //显示图片
+                    displayImage(outputImagePath.getAbsolutePath());
+                }
+                break;
+            //打开相册后返回
+            case SELECT_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    String imagePath = null;
+                    //判断手机系统版本号
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                        //4.4及以上系统使用这个方法处理图片
+                        imagePath = CameraUtils.getImageOnKitKatPath(data, this);
+                    } else {
+                        imagePath = CameraUtils.getImageBeforeKitKatPath(data, this);
+                    }
+                    //显示图片
+                    displayImage(imagePath);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 通过图片路径显示图片
+     */
+    private void displayImage(String imagePath) {
+        if (!TextUtils.isEmpty(imagePath)) {
+
+            //放入缓存
+            SPUtils.putString("imageUrl",imagePath,this);
+            ivHead = findViewById(R.id.iv_head);
+            //显示图片
+            //Glide.with(this).load(imagePath).apply(requestOptions).into(ivHead);
+            //Glide.with(this).load("http://rjoyl2a7m.hn-bkt.clouddn.com/542c1db3b6d360845369369b3fb0ac24.jpeg").apply(requestOptions).into(ivHead);
+            //压缩图片
+            orc_bitmap = CameraUtils.compression(BitmapFactory.decodeFile(imagePath));
+            ivHead.setImageBitmap(orc_bitmap);
+
+            //Log.d("Aaron","base64==" + cursor.getString(2));
+//            Log.d("Aaron","orc_bitmap==" + orc_bitmap);
+//            Log.d("Aaron","ivHead==" + ivHead);
+
+            //转Base64
+            base64Pic = BitmapUtils.bitmapToBase64(orc_bitmap);
+
+            SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
+            String username = spfRecord.getString("username", "");
+
+//            AvatarDBHelper avatarDBHelper = new AvatarDBHelper(this, "avatars.db", null, 1);
+//            SQLiteDatabase db = avatarDBHelper.getWritableDatabase();
+//            ContentValues cValue = new ContentValues();
+//            Cursor cursor = db.query("avatars", null, "username=?", new String[]{username}, null, null, null);
+//            if(cursor.getCount() == 0){
+//                cValue.put("username",username);
+//                cValue.put("image_base64",base64Pic);
+//                db.insert("avatars",null ,cValue);
+//            }
+//            db.close();
+            final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            orc_bitmap.compress(Bitmap.CompressFormat.JPEG,100,os);
+            UpLoadAvatarDBHelper upLoadAvatarDBHelper = new UpLoadAvatarDBHelper(this, "avatars.db", null, 1);
+            SQLiteDatabase db = upLoadAvatarDBHelper.getWritableDatabase();
+            ContentValues cValue = new ContentValues();
+            Cursor cursor = db.query("avatars", null, "username=?", new String[]{username}, null, null, null);
+            if(cursor.getCount() == 0){
+                cValue.put("username",username);
+                cValue.put("express_img",os.toByteArray());
+                db.insert("avatars",null ,cValue);
+            }
+            db.close();
+
+
+
+        } else {
+            showMsg("图片获取失败");
+        }
+    }
+
+
+    /**
+     * Toast提示
+     *
+     * @param msg
+     */
+    private void showMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 
 
     //ViewPager适配器
@@ -911,6 +1204,8 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
 
         String rank , username;
         int level;
+
+
         DBHelper dbHelper = new DBHelper(this, "cookies.db", null, 1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -925,7 +1220,9 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
             //Log.d("Aaron","id==" + id);
             String cookie=cursor.getString(1);
 
+
             userInfoGet.setCookie(cookie);
+            //userInfoGet.setCookie("JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
             //Log.d("Aaron","cookie==" + cookie);
             // 将游标移到下一行
             cursor.moveToNext();
@@ -941,21 +1238,30 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
             }
         }
         db.close();
+
         userInfoJson = userInfoGet.getContent();
         UserInfo userInfo = gson.fromJson(userInfoJson, UserInfo.class);
-        userInfo.getData().getCoinInfo().getLevel();
-        level = userInfo.getData().getCoinInfo().getLevel();
-        rank = userInfo.getData().getCoinInfo().getRank();
-        username = userInfo.getData().getUserInfo().getPublicName();
-        //Log.d("Aaron", "level是==" + level);
-        TextView userInfoLevel_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_level);
-        TextView userInfoRank_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_ranking);
-        TextView userInfoName_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_name);
-        userInfoLevel_tv.setText(String.valueOf(level));
-        userInfoRank_tv.setText(rank);
-        userInfoName_tv.setText(username);
-        Log.d("Aaron", "数据是==" + userInfoGet.getContent());
-        //return userInfoGet.getContent();
+
+        if(userInfo.getErrorCode() == 0) {
+            userInfo.getData().getCoinInfo().getLevel();
+            level = userInfo.getData().getCoinInfo().getLevel();
+            rank = userInfo.getData().getCoinInfo().getRank();
+            username = userInfo.getData().getUserInfo().getPublicName();
+            //Log.d("Aaron", "level是==" + level);
+            TextView userInfoLevel_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_level);
+            TextView userInfoRank_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_ranking);
+            TextView userInfoName_tv = (TextView) me_viewHome.findViewById(R.id.tv_user_name);
+            userInfoLevel_tv.setText(String.valueOf(level));
+            userInfoRank_tv.setText(rank);
+            userInfoName_tv.setText(username);
+            Log.d("Aaron", "数据是==" + userInfoGet.getContent());
+
+            SharedPreferences spf = getSharedPreferences("spfRecord", MODE_PRIVATE);
+            SharedPreferences.Editor edit = spf.edit();
+            edit.putString("username", username);
+            edit.apply();
+        }
+
     }
 
     //获取问答数据
@@ -1002,6 +1308,48 @@ public class MainActivity extends AppCompatActivity implements GetViewPagerItemV
 
         return wenDaLinkList;
 
+    }
+
+    //获取网络图片
+    public Bitmap returnBitMap(String url){
+
+        URL myFileUrl = null;
+
+        Bitmap bitmap = null;
+
+        try {
+
+            myFileUrl = new URL(url);
+
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        try {
+
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl
+
+                    .openConnection();
+
+            conn.setDoInput(true);
+
+            conn.connect();
+
+            InputStream is = conn.getInputStream();
+
+            bitmap = BitmapFactory.decodeStream(is);
+
+            is.close();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return bitmap;
     }
 
 }

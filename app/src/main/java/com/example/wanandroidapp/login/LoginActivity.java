@@ -205,22 +205,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     //Log.d("Aaron","json == " + user_login_json);
                     ResponseLogin responseLogin = gson.fromJson(user_login_json,ResponseLogin.class);
                     responseLogin.getErrorCode();
-                    //Log.d("Aaron","cookiestr == " + userLoginPost.getCookiestr());
-                    //Log.d("Aaron","cookiestr == " + userLoginPost.getCookiestr());
-                    //Bundle bundle = new Bundle();
-                    //this.cookieStr = userLoginPost.getCookiestr();
-                    //Log.d("Aaron","在Login里面---cookiestr == " + userLoginPost.getCookiestr());
-                    //Log.d("Aaron","userLoginPost.getDatalist().get(0) == " + userLoginPost.getDatalist().get(0));
-//                    String user_login_json = userLoginPost.getDatalist().get(0);
-//                    Log.d("Aaron","json == " + user_login_json);
-//                    //Log.d("Aaron","json == " + user_login_json);
-//                    ResponseLogin responseLogin = gson.fromJson(user_login_json,ResponseLogin.class);
-//                    responseLogin.getErrorCode();
-
-
-//                    Log.d("Aaron","name == " + name);
-//                    Log.d("Aaron","password == " + password);
-//                    Log.d("Aaron","ErrorCode == " + responseLogin.getErrorCode());
 
                     if (responseLogin.getErrorCode() == 0) {
                         if(match2){
@@ -228,6 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             //Log.d("Aaron","记住密码");
                             cb_rmbPsw.setChecked(true);
                         }
+
                         Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
 
                         Runnable target;

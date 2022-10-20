@@ -151,8 +151,9 @@ public class CollectArticleActivity extends AppCompatActivity {
             int id = cursor.getInt(0);
             //Log.d("Aaron","id==" + id);
             String cookie = cursor.getString(1);
-
+            Log.d("Aaron","cookie==" + cookie);
             getPostData.setCookie(cookie);
+            //getPostData.setCookie("JSESSIONID=CF318C6CA9C070F3BAA33A86844071EA");
             //Log.d("Aaron","cookie==" + cookie);
             // 将游标移到下一行
             cursor.moveToNext();

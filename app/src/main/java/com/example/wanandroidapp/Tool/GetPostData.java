@@ -67,7 +67,7 @@ public class GetPostData extends Thread{
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(address)
-                .addHeader("cookie",cookie)
+                .addHeader("cookie", cookie)
                 .build();
 
 //        Request request = new Request.Builder()
