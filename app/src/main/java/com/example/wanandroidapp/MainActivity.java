@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,32 +30,23 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.wanandroidapp.Adapter.ArticleAdapter;
 import com.example.wanandroidapp.Adapter.SearchAdapter;
 import com.example.wanandroidapp.Banner.Banner;
 import com.example.wanandroidapp.Banner.GetViewPagerItemView;
 import com.example.wanandroidapp.Banner.GsonBannerData;
-import com.example.wanandroidapp.SQLite.AvatarDBHelper;
 import com.example.wanandroidapp.SQLite.UpLoadAvatarDBHelper;
 import com.example.wanandroidapp.Thread.GetNetDataThread;
-import com.example.wanandroidapp.Adapter.ArticleAdapter;
 import com.example.wanandroidapp.Tool.CircleImageView;
 import com.example.wanandroidapp.Tool.CollectArticlePost;
 import com.example.wanandroidapp.Tool.DBHelper;
 import com.example.wanandroidapp.Tool.GetPostData;
-import com.example.wanandroidapp.Tool.UserLoginPost;
 import com.example.wanandroidapp.bean.Article;
-
 import com.example.wanandroidapp.bean.Fruit;
 import com.example.wanandroidapp.bean.NavigationData;
 import com.example.wanandroidapp.bean.UserInfo;
@@ -65,7 +55,6 @@ import com.example.wanandroidapp.login.LoginActivity;
 import com.example.wanandroidapp.model.Bean;
 import com.example.wanandroidapp.util.BitmapUtils;
 import com.example.wanandroidapp.util.CameraUtils;
-import com.example.wanandroidapp.util.ImageUtil;
 import com.example.wanandroidapp.util.SPUtils;
 import com.example.wanandroidapp.widge.SearchView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -87,6 +76,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 
 
@@ -594,6 +588,16 @@ public class MainActivity extends Activity implements GetViewPagerItemView,Searc
 //        }
 
         userInfoJsonData(me_viewHome);
+
+        try {
+            String imagePath = SPUtils.getString("imageUrl", "", this);
+            ivHead = me_viewHome.findViewById(R.id.iv_head);
+            orc_bitmap = CameraUtils.compression(BitmapFactory.decodeFile(imagePath));
+            ivHead.setImageBitmap(orc_bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //设置头像
 //        SharedPreferences spfRecord = getSharedPreferences("spfRecord", MODE_PRIVATE);
 //        String username = spfRecord.getString("username", "");
